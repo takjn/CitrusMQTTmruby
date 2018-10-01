@@ -1,0 +1,6 @@
+# GR-CITRUS MQTT Client Sample program
+- GR-CITRUS and WA-MIKAN
+- MQTT Version 3.1.1
+- CONNECT, PUBLISH, SUBSCRIBE, PING
+- QoS=0
+- TCP=1883 or SSL=8883
