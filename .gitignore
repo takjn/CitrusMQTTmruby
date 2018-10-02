@@ -1,3 +1,4 @@
+*.mrb
 *.gem
 *.rbc
 /.config
