@@ -218,12 +218,12 @@ end
 
 puts "MQTT Connect - #{MQTT_SERVER}"
 packet = build_mqtt_connect_packet(keep_alive: MQTT_KEEP_ALIVE, user_name: USER_NAME, password: PASSWORD)
-System.exit "CONNACK Fail" unless mqtt_request(packet, "+IPD,4:" + 0x20.chr + 0x02.chr + 0x00.chr + 0x00.chr)  # Connection Accepted
+System.exit "CONNACK failed" unless mqtt_request(packet, "+IPD,4:" + 0x20.chr + 0x02.chr + 0x00.chr + 0x00.chr)  # Connection Accepted
 delay(100)
 
 puts "MQTT Subscribe"
 packet = build_mqtt_subscribe_packet(topic: SUB_TOPIC)
-System.exit "SUBACK Fail" unless mqtt_request(packet, "+IPD,5:" + 0x90.chr + 0x03.chr + 0x00.chr + 0x01.chr + 0x00.chr)  # Success - Packet Identifier = 0x01, Maximum QoS = 0
+System.exit "SUBACK failed" unless mqtt_request(packet, "+IPD,5:" + 0x90.chr + 0x03.chr + 0x00.chr + 0x01.chr + 0x00.chr)  # Success - Packet Identifier = 0x01, Maximum QoS = 0
 delay(100)
 
 puts "Topic - #{SUB_TOPIC}"
@@ -247,7 +247,7 @@ loop do
     # PING
     if one_sec_ticker == MQTT_KEEP_ALIVE
       puts "MQTT PING"
-      System.exit "PINGRESP Fail" unless mqtt_request((0xc0.chr + 0x00.chr), "+IPD,2:" + 0xD0.chr + 0x00.chr)
+      System.exit "PINGRESP failed" unless mqtt_request((0xc0.chr + 0x00.chr), "+IPD,2:" + 0xD0.chr + 0x00.chr)
       one_sec_ticker = 0
     end
   end
@@ -256,7 +256,7 @@ loop do
   if digitalRead(BUTTON_PIN) == 0
     puts "MQTT PUBLISH"
     packet = build_mqtt_publish_packet(topic: PUB_TOPIC, message: "{ \"eventType\": \"test\", \"eventData\": { \"value\": \"#{now}\" } }")
-    System.exit "PUBLISH Fail" unless mqtt_request(packet, "SEND OK")
+    System.exit "PUBLISH failed" unless mqtt_request(packet, "SEND OK")
   end
 
   # Check Subscribe
@@ -264,7 +264,7 @@ loop do
     receive_message = ""
     while @wifi.available() > 0
       receive_message += @wifi.read()
-      delay 50    # a little hacky but  this may be the best...
+      delay 50    # a little hacky but this may be the best...
     end
 
     if receive_message.include?(SUB_TOPIC)
