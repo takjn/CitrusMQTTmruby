@@ -218,12 +218,12 @@ end
 
 puts "MQTT Connect - #{MQTT_SERVER}"
 packet = build_mqtt_connect_packet(keep_alive: MQTT_KEEP_ALIVE, user_name: USER_NAME, password: PASSWORD)
-System.exit "CONNACK Fail" unless mqtt_request(packet, "+IPD")  # TODO: check the CONNACK Return Code
+System.exit "CONNACK Fail" unless mqtt_request(packet, "+IPD,4:" + 0x20.chr + 0x02.chr + 0x00.chr + 0x00.chr)  # Connection Accepted
 delay(100)
 
 puts "MQTT Subscribe"
 packet = build_mqtt_subscribe_packet(topic: SUB_TOPIC)
-System.exit "SUBACK Fail" unless mqtt_request(packet, "+IPD")  # TODO: check the SUBACK Return Code
+System.exit "SUBACK Fail" unless mqtt_request(packet, "+IPD,5:" + 0x90.chr + 0x03.chr + 0x00.chr + 0x01.chr + 0x00.chr)  # Success - Packet Identifier = 0x01, Maximum QoS = 0
 delay(100)
 
 puts "Topic - #{SUB_TOPIC}"
@@ -247,7 +247,7 @@ loop do
     # PING
     if one_sec_ticker == MQTT_KEEP_ALIVE
       puts "MQTT PING"
-      System.exit "PINGRESP Fail" unless mqtt_request((0xc0.chr + 0x00.chr), "+IPD")  # TODO: check the Return Code
+      System.exit "PINGRESP Fail" unless mqtt_request((0xc0.chr + 0x00.chr), "+IPD,2:" + 0xD0.chr + 0x00.chr)
       one_sec_ticker = 0
     end
   end
